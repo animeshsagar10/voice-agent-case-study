@@ -21,7 +21,9 @@ load_dotenv()
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 # Configurable via JUDGE_MODEL env var. Defaults to Sonnet for best quality.
-# Use claude-haiku-4-5-20251001 for faster/cheaper runs during development.
+# claude-haiku-4-5-20251001 — development: ~4s latency, ~$0.50/1k evals
+# claude-sonnet-4-6          — production: best discrimination gap (default)
+# claude-opus-4-6            — clinical: perfect calibration (std_dev=0.0), safety-aware
 MODEL = os.getenv("JUDGE_MODEL", "claude-sonnet-4-6")
 
 EVAL_SYSTEM = """You are an expert evaluator for voice AI responses in healthcare and social services contexts.
