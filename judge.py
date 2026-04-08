@@ -19,7 +19,10 @@ from models import (
 load_dotenv()
 
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-MODEL = "claude-haiku-4-5-20251001"
+
+# Configurable via JUDGE_MODEL env var. Defaults to Sonnet for best quality.
+# Use claude-haiku-4-5-20251001 for faster/cheaper runs during development.
+MODEL = os.getenv("JUDGE_MODEL", "claude-sonnet-4-6")
 
 EVAL_SYSTEM = """You are an expert evaluator for voice AI responses in healthcare and social services contexts.
 Score responses objectively and consistently. Use the full 1-10 range:

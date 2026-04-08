@@ -13,8 +13,9 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 # Install dependencies
 uv sync
 
-# Add your Anthropic API key
+# Add your Anthropic API key and optionally select the judge model
 echo "ANTHROPIC_API_KEY=sk-ant-..." > .env
+echo "JUDGE_MODEL=claude-sonnet-4-6" >> .env   # default; swap to claude-haiku-4-5-20251001 for dev
 
 # Start the server
 uv run python main.py
@@ -169,8 +170,8 @@ curl -X POST "http://localhost:8000/api/evaluate/calibrate?runs=3" \
 
 ## Design Decisions
 
-**LLM-as-Judge with `claude-haiku-4-5`**
-Haiku gives fast, cheap evaluations (~$0.001/call) with quality sufficient for structured scoring. The system prompt uses an anchored scale (5=average, 7=good, 9=excellent) to reduce score inflation. The model is swappable — change `MODEL` in `judge.py` for higher fidelity.
+**Configurable LLM judge — defaults to `claude-sonnet-4-6`**
+The judge model is set via the `JUDGE_MODEL` env var. Sonnet is the default for production-quality scoring. Switch to `claude-haiku-4-5-20251001` for fast, cheap development iteration — same JSON schema, ~12x cheaper. See [EVAL_COMPARISON.md](EVAL_COMPARISON.md) for a full benchmark comparing both models across all evaluation metrics.
 
 **In-memory cache keyed by MD5(directive + user_input + response)**
 Identical requests return instantly without re-billing. The cache is intentionally bypassed in the `/calibrate` endpoint to measure true consistency. In production this would be Redis with a TTL.
